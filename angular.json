@@ -23,7 +23,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/spa1",
+            "outputPath": "dist/spa1/browser",
             "index": "projects/spa1/src/index.html",
             "main": "projects/spa1/src/main.ts",
             "polyfills": "projects/spa1/src/polyfills.ts",
@@ -108,7 +108,8 @@
             "tsConfig": [
               "projects/spa1/tsconfig.app.json",
               "projects/spa1/tsconfig.spec.json",
-              "projects/spa1/e2e/tsconfig.json"
+              "projects/spa1/e2e/tsconfig.json",
+              "projects/spa1/tsconfig.server.json"
             ],
             "exclude": [
               "**/node_modules/**"
@@ -125,6 +126,53 @@
             "production": {
               "devServerTarget": "spa1:serve:production"
             }
+          }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/spa1/server",
+            "main": "projects/spa1/server.ts",
+            "tsConfig": "projects/spa1/tsconfig.server.json"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media",
+              "fileReplacements": [
+                {
+                  "replace": "projects/spa1/src/environments/environment.ts",
+                  "with": "projects/spa1/src/environments/environment.prod.ts"
+                }
+              ],
+              "sourceMap": false,
+              "optimization": true
+            }
+          }
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "options": {
+            "browserTarget": "spa1:build",
+            "serverTarget": "spa1:server"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "spa1:build:production",
+              "serverTarget": "spa1:server:production"
+            }
+          }
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "browserTarget": "spa1:build:production",
+            "serverTarget": "spa1:server:production",
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {}
           }
         }
       }
